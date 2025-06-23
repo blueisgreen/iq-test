@@ -3,9 +3,18 @@ from pydantic import BaseModel, Field
 from typing import List, Dict
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
+from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify your frontend URL(s)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Models ---
 
