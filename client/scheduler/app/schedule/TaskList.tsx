@@ -13,6 +13,8 @@ export default function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+  const [cancelStatus, setCancelStatus] = useState<string>("");
 
   useEffect(() => {
     async function fetchTasks() {
@@ -31,6 +33,26 @@ export default function TaskList() {
     fetchTasks();
   }, []);
 
+  async function handleCancel() {
+    if (!selectedTaskId) return;
+    setCancelStatus("Cancelling...");
+    try {
+      const res = await fetch(`http://localhost:8000/tasks/${selectedTaskId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setTasks(tasks.filter((t) => t.id !== selectedTaskId));
+        setCancelStatus("Task cancelled.");
+        setSelectedTaskId(null);
+      } else {
+        setCancelStatus("Failed to cancel task.");
+      }
+    } catch {
+      setCancelStatus("Error connecting to backend.");
+    }
+    setTimeout(() => setCancelStatus(""), 2000);
+  }
+
   if (loading)
     return (
       <div className="my-12 p-4 border border-yellow-300">Loading tasks...</div>
@@ -43,6 +65,12 @@ export default function TaskList() {
 
   return (
     <div className="my-12 p-2 border border-green-300">
+      <button
+        className="bg-red-600 text-white rounded px-3 py-1 hover:bg-red-700 disabled:opacity-50"
+        disabled={!selectedTaskId}
+        onClick={handleCancel}>
+        Cancel
+      </button>
       <table className="min-w-full border mt-8">
         <thead>
           <tr className="bg-gray-100 dark:bg-gray-800">
@@ -54,7 +82,12 @@ export default function TaskList() {
         </thead>
         <tbody>
           {tasks.map((task) => (
-            <tr key={task.id} className="text-center">
+            <tr
+              key={task.id}
+              className={`text-center cursor-pointer ${
+                selectedTaskId === task.id ? "bg-red-100 dark:bg-red-900" : ""
+              }`}
+              onClick={() => setSelectedTaskId(task.id)}>
               <td className="px-4 py-2 border">{task.id}</td>
               <td className="px-4 py-2 border">{task.task_type}</td>
               <td className="px-4 py-2 border">{task.duration_ms}</td>
@@ -63,6 +96,11 @@ export default function TaskList() {
           ))}
         </tbody>
       </table>
+      {cancelStatus && (
+        <div className="mt-2 text-center text-sm text-gray-700 dark:text-gray-200">
+          {cancelStatus}
+        </div>
+      )}
     </div>
   );
 }
