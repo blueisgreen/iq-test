@@ -51,12 +51,22 @@ init_users()
 TASK_OUTPUTS: List[Dict] = []
 
 
-async def run_task(task: Task):
-    interval = task.duration_ms
+async def run_task(id: str):
+    print("Starting task with ID", id)
+    iteration = 0
+    task = TASKS.get(id)
+    if not task or task.status != "Scheduled":
+        return
+
     while True:
+        # take a nap until it's time
+        print("About to take a nap", task.duration_ms)
+        await asyncio.sleep(task.duration_ms / 1000)
+        iteration += 1
+        print("Iteration", iteration)
+
         if task.status != "Scheduled":
-            break
-        await asyncio.sleep(interval)
+            return
         now = datetime.now(timezone.utc)
         # Record output
         TASK_OUTPUTS.append({
@@ -88,7 +98,7 @@ async def create_task(payload: TaskCreate, background_tasks: BackgroundTasks):
         createdAt=now,
     )
     TASKS[task_id] = task
-    background_tasks.add_task(run_task, task)
+    background_tasks.add_task(run_task, task_id)
     return task
 
 
@@ -124,12 +134,10 @@ def delete_task(task_id: str):
     task = TASKS.get(task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
-    now = datetime.now(timezone.utc)
-    elapsed = (now - task.createdAt).total_seconds() * 1000
-    if task.status != "Scheduled" or elapsed >= task.duration_ms:
+    if task.status != "Scheduled":
         raise HTTPException(status_code=400, detail="Task is not running")
     task.status = "Cancelled"
-    return
+    return task
 
 
 @app.get("/tasks/output")
