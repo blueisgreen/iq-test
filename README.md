@@ -13,19 +13,22 @@ These instructions assume familiarity with Python and ReactJS. Feel free to cont
 
 ### Source
 
-This source is available on GitHub at:
+This source is available on GitHub at: https://github.com/blueisgreen/iq-test.git
+
+Begin by cloning the source into a local directory. For now, everything will run locally.
 
 ### Operating instructions
 
 From a command prompt:
 
-1. cd into the project to the same directory as the service directory (not into the service directory).
-2. Understand your Python environment and be sure to install Python dependencies.
-3. Start the server using:
+1. cd into the project directory. You will find this README.md file, plus two directories: client and service.
+2. Understand your Python environment and be sure to install Python dependencies. You might want to install a virtual environment (see Python documentation).
+3. Install the dependencies: `pip install -r requirements.txt`
+4. Start the server using: `uvicorn service.main:app --reload`
 
-`uvicorn service.main:app --reload`
+The service should start and listen on port 8000. Now you can watch the action in the console.
 
-You can watch the action in the console.
+When you want to stop the service, press Ctrl+C in the console.
 
 ### Improvement ideas
 
