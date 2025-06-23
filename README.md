@@ -4,6 +4,8 @@ Make sure Zanzibar can merge.
 
 ## Schedulator service
 
+### Operating instructions
+
 From a command prompt:
 
 1. cd into the project to the same directory as the service directory (not into the service directory).
