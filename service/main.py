@@ -119,13 +119,10 @@ def get_tasks():
 
 @app.get("/tasks/active", response_model=List[Task])
 def get_active_tasks():
-    now = datetime.now(timezone.utc)
     active = []
     for task in TASKS.values():
         if task.status == "Scheduled":
-            elapsed = (now - task.createdAt).total_seconds() * 1000
-            if elapsed < task.duration_ms:
-                active.append(task)
+            active.append(task)
     return active
 
 
