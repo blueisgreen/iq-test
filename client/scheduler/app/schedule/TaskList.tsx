@@ -58,7 +58,18 @@ export default function TaskList() {
     return (
       <div className="my-12 p-4 border border-yellow-300">Loading tasks...</div>
     );
-  if (error) return <div className="text-red-600">{error}</div>;
+  if (error)
+    return (
+      <div className="my-12">
+        <div className="text-red-600">{error}</div>
+        <button
+          className="bg-gray-500 text-white rounded my-2 px-3 py-1 hover:bg-green-700 disabled:opacity-50"
+          onClick={fetchTasks}
+          disabled={loading}>
+          Refresh
+        </button>
+      </div>
+    );
   if (tasks.length === 0)
     return (
       <div className="my-12">
