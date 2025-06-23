@@ -52,14 +52,11 @@ TASK_OUTPUTS: List[Dict] = []
 
 
 async def run_task(task: Task):
-    start_time = task.createdAt
     interval = task.duration_ms
-    next_run = start_time.timestamp() + interval
-    await asyncio.sleep(interval)
     while True:
-        # end once task is canceled
         if task.status != "Scheduled":
             break
+        await asyncio.sleep(interval)
         now = datetime.now(timezone.utc)
         # Record output
         TASK_OUTPUTS.append({
@@ -67,8 +64,8 @@ async def run_task(task: Task):
             "task_id": task.id,
             "output": task.task_type
         })
-        next_run += interval
-        await asyncio.sleep(interval)  # should put us close to the right time
+        print(
+            f"[{now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}] Task {task.id} output: {task.task_type}")
 
 # --- Endpoints ---
 
