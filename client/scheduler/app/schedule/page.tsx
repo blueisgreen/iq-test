@@ -2,6 +2,7 @@
 
 import ScheduleForm from "./ScheduleForm";
 import TaskList from "./TaskList";
+import TaskOutputTable from "./TaskOutputTable";
 
 export default function ScheduleEvent() {
   return (
@@ -9,6 +10,7 @@ export default function ScheduleEvent() {
       <h1 className="text-2xl font-bold mb-6">Schedule an Event</h1>
       <ScheduleForm />
       <TaskList />
+      <TaskOutputTable />
     </div>
   );
 }

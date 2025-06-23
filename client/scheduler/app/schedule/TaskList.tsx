@@ -61,24 +61,30 @@ export default function TaskList() {
   if (error) return <div className="text-red-600">{error}</div>;
   if (tasks.length === 0)
     return (
-      <div className="my-12 p-4 border border-blue-300">No active tasks.</div>
+      <div className="my-12">
+        <div className="p-4 border border-blue-300">No active tasks.</div>
+        <button
+          className="bg-gray-500 text-white rounded my-2 px-3 py-1 hover:bg-green-700 disabled:opacity-50"
+          onClick={fetchTasks}
+          disabled={loading}>
+          Refresh
+        </button>
+      </div>
     );
 
   return (
     <div className="my-12 p-2 border border-green-300">
       <div className="flex gap-2 mb-2">
         <button
-          className="bg-gray-500 text-white rounded px-3 py-1 hover:bg-gray-700 disabled:opacity-50"
+          className="bg-gray-500 text-white rounded px-3 py-1 hover:bg-green-700 disabled:opacity-50"
           onClick={fetchTasks}
-          disabled={loading}
-        >
+          disabled={loading}>
           Refresh
         </button>
         <button
           className="bg-red-600 text-white rounded px-3 py-1 hover:bg-red-700 disabled:opacity-50"
           disabled={!selectedTaskId}
-          onClick={handleCancel}
-        >
+          onClick={handleCancel}>
           Cancel
         </button>
       </div>
@@ -98,8 +104,7 @@ export default function TaskList() {
               className={`text-center cursor-pointer ${
                 selectedTaskId === task.id ? "bg-red-100 dark:bg-red-900" : ""
               }`}
-              onClick={() => setSelectedTaskId(task.id)}
-            >
+              onClick={() => setSelectedTaskId(task.id)}>
               <td className="px-4 py-2 border">{task.id}</td>
               <td className="px-4 py-2 border">{task.task_type}</td>
               <td className="px-4 py-2 border">{task.duration_ms}</td>
