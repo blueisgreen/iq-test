@@ -16,20 +16,21 @@ export default function TaskList() {
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [cancelStatus, setCancelStatus] = useState<string>("");
 
-  useEffect(() => {
-    async function fetchTasks() {
-      setLoading(true);
-      setError("");
-      try {
-        const res = await fetch("http://localhost:8000/tasks/active");
-        if (!res.ok) throw new Error("Failed to fetch tasks");
-        const data = await res.json();
-        setTasks(data);
-      } catch (err) {
-        setError("Could not load tasks.");
-      }
-      setLoading(false);
+  async function fetchTasks() {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("http://localhost:8000/tasks/active");
+      if (!res.ok) throw new Error("Failed to fetch tasks");
+      const data = await res.json();
+      setTasks(data);
+    } catch (err) {
+      setError("Could not load tasks.");
     }
+    setLoading(false);
+  }
+
+  useEffect(() => {
     fetchTasks();
   }, []);
 
@@ -65,12 +66,22 @@ export default function TaskList() {
 
   return (
     <div className="my-12 p-2 border border-green-300">
-      <button
-        className="bg-red-600 text-white rounded px-3 py-1 hover:bg-red-700 disabled:opacity-50"
-        disabled={!selectedTaskId}
-        onClick={handleCancel}>
-        Cancel
-      </button>
+      <div className="flex gap-2 mb-2">
+        <button
+          className="bg-gray-500 text-white rounded px-3 py-1 hover:bg-gray-700 disabled:opacity-50"
+          onClick={fetchTasks}
+          disabled={loading}
+        >
+          Refresh
+        </button>
+        <button
+          className="bg-red-600 text-white rounded px-3 py-1 hover:bg-red-700 disabled:opacity-50"
+          disabled={!selectedTaskId}
+          onClick={handleCancel}
+        >
+          Cancel
+        </button>
+      </div>
       <table className="min-w-full border mt-8">
         <thead>
           <tr className="bg-gray-100 dark:bg-gray-800">
@@ -87,7 +98,8 @@ export default function TaskList() {
               className={`text-center cursor-pointer ${
                 selectedTaskId === task.id ? "bg-red-100 dark:bg-red-900" : ""
               }`}
-              onClick={() => setSelectedTaskId(task.id)}>
+              onClick={() => setSelectedTaskId(task.id)}
+            >
               <td className="px-4 py-2 border">{task.id}</td>
               <td className="px-4 py-2 border">{task.task_type}</td>
               <td className="px-4 py-2 border">{task.duration_ms}</td>
